@@ -33,6 +33,7 @@ export class UserService {
     user.passwordChangeAt = new Date();
     await this.userRepository.save(user);
   }
+  
   async Onboarding(dto: OnBoardingDto) {
     const { email, first_name, last_name, mobile_number } = dto;
 
