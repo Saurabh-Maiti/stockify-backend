@@ -34,3 +34,12 @@ export class OnBoardingDto{
     @IsEnum(UserStatus)
     status?:UserStatus;
 }
+
+export class UpdatePasswordDto{
+    @IsEmail()
+    email!:string;
+    
+    @IsString()
+    @Length(6,20)
+    new_password!:string;
+}

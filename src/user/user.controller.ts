@@ -1,5 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { OnBoardingDto } from './dto/user.dto';
+import { Body, Controller, Patch, Post } from '@nestjs/common';
+import { OnBoardingDto, UpdatePasswordDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -11,6 +11,14 @@ export class UserController {
     return {
       info: response,
       message: 'Invitation sent successfully',
+    };
+  }
+  @Patch('update-password')
+  async updatePassword(@Body() dto: UpdatePasswordDto) {
+    const { email, new_password } = dto;
+    await this.userService.changePassword(email, new_password);
+    return {
+      message: 'Password updated successfully',
     };
   }
 }

@@ -12,6 +12,7 @@ export class AuthService {
         if(!user){
             throw new Error('User not found');
         }
+        
         if(user.passwordChangeAt===null){
             throw new Error('Password change required');
         }
