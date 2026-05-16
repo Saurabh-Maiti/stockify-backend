@@ -1,11 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { OnBoardingDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
+import { Utils } from 'src/common/utils';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MailService } from 'src/mail/mail.service';
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly mailService: MailService,
+  ) {}
   async findUser(email: string) {
     return await this.userRepository.findOne({
       where: {
@@ -19,14 +25,16 @@ export class UserService {
   }
 
   async Onboarding(dto: OnBoardingDto) {
-    const { email, first_name, last_name, password, mobile_number } = dto;
+    const { email, first_name, last_name, mobile_number } = dto;
+
+    const password = Utils.generatePassword(8);
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const existingUser = await this.findUser(email);
 
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      throw new ConflictException('User with this email already exists');
     }
 
     const user = await this.createUser({
@@ -38,6 +46,7 @@ export class UserService {
     });
 
     const { password: _password, ...sanitizedUser } = user;
+    this.mailService.sendMail(email, password);
 
     return sanitizedUser;
   }
