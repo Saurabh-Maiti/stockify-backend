@@ -23,7 +23,16 @@ export class UserService {
     const user = this.userRepository.create(data);
     return await this.userRepository.save(user);
   }
-
+  async changePassword(email: string, newPassword: string) {
+    const user = await this.findUser(email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    user.password = hashedPassword;
+    user.passwordChangeAt = new Date();
+    await this.userRepository.save(user);
+  }
   async Onboarding(dto: OnBoardingDto) {
     const { email, first_name, last_name, mobile_number } = dto;
 
