@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserStatus } from '../enum/user.status';
+import { UserRole, UserStatus } from '../enum/user.enums';
 
 @Entity('users')
 export class User {
@@ -44,8 +44,15 @@ export class User {
   })
   status!: UserStatus;
 
-  @Column({default: null})
+  @Column({ default: null })
   passwordChangeAt!: Date;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role!: UserRole;
 
   @CreateDateColumn()
   createdAt!: Date;

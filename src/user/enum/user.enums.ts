@@ -4,3 +4,7 @@ export enum UserStatus{
     BLOCKED='BLOCKED',
     PENDING='PENDING'
 }
+export enum UserRole{
+    ADMIN='ADMIN',
+    USER='USER'
+}
